@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  llama-server:
+    build: ./llama-server
+    container_name: llama-server
+    args:
+      HF_TOKEN: ${HF_TOKEN}
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  ai-server:
+    build: .
+    container_name: thunderbird-ai
+    depends_on:
+      - llama-server
+    environment:
+      - IMAP_HOST=imap.your-email-provider.com
+      - IMAP_PORT=993
+      - EMAIL_USER=your-email@example.com
+      - EMAIL_PASS=your-password
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
