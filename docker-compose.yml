@@ -1,24 +1,29 @@
 version: '3.8'
+
 services:
   llama-server:
-    build: ./llama-server
+    build:
+      context: ./llama-server  # Ensure this points to the correct folder
+      dockerfile: Dockerfile
+      args:
+        HF_TOKEN: ${HF_TOKEN}  # Pass in Hugging Face token
     container_name: llama-server
-    args:
-      HF_TOKEN: ${HF_TOKEN}
+    volumes:
+      - ./llama-server:/app  # Mount local files to container
     ports:
       - "5000:5000"
     restart: unless-stopped
-
+    env_file:
+      - .env  # Store email credentials securely
   ai-server:
-    build: .
+    build:
+      context: ./ai-server  # Path to the directory containing Dockerfile
+      dockerfile: Dockerfile
     container_name: thunderbird-ai
     depends_on:
       - llama-server
-    environment:
-      - IMAP_HOST=imap.your-email-provider.com
-      - IMAP_PORT=993
-      - EMAIL_USER=your-email@example.com
-      - EMAIL_PASS=your-password
+    env_file:
+      - .env  # Store email credentials securely
     ports:
       - "4000:4000"
     restart: unless-stopped
