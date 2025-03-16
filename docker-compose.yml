@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   llama-server:
+    platform: linux/arm64
     build:
       context: ./llama-server  # Ensure this points to the correct folder
       dockerfile: Dockerfile
@@ -11,7 +12,7 @@ services:
     volumes:
       - ./llama-server:/app  # Mount local files to container
     ports:
-      - "5000:5000"
+      - "8000:8000"
     restart: unless-stopped
     env_file:
       - .env  # Store email credentials securely

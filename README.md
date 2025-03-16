@@ -51,13 +51,19 @@ Ensure you have the following installed:
 8. Rebuild the Image
     After freeing up space, try building again:
     docker compose --env-file .env build --no-cache
-    Let me know if you still run into issues! 🚀  
+9. Start the containers
+    docker compose up -d
+10. Check logs if needed
+    docker logs -f llama-server
+    docker logs -f ai-server
+11. After increasing the limit, use:
+    docker logs -f --tail=500 llama-server // This will show the last 500 lines without truncation.
 
 ## Accessing the Server
 
 Once the server is running, access the API at:
 
-http://localhost:5000
+http://localhost:4000
 
 
 ## Stopping the Server

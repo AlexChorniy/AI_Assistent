@@ -41,7 +41,7 @@ WORKDIR /app
 COPY . .
 
 # Expose API port
-EXPOSE 5000
+EXPOSE 8000
 
 # Start the Node.js application
 CMD ["node", "ai-thunderbird.js"]
