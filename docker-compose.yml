@@ -2,29 +2,28 @@ version: '3.8'
 
 services:
   llama-server:
-    platform: linux/arm64
+    platform: linux/amd64  # Force AMD64 architecture
     build:
-      context: ./llama-server  # Ensure this points to the correct folder
+      context: ./llama-server
       dockerfile: Dockerfile
       args:
-        HF_TOKEN: ${HF_TOKEN}  # Pass in Hugging Face token
+        HF_TOKEN: ${HF_TOKEN} # Pass the HF_TOKEN as a build argument
     container_name: llama-server
-    volumes:
-      - ./llama-server:/app  # Mount local files to container
-    ports:
-      - "8000:8000"
-    restart: unless-stopped
     env_file:
-      - .env  # Store email credentials securely
+      - .env
+    ports:
+      - "5050:5050"
+    restart: unless-stopped
+
   ai-server:
     build:
-      context: ./ai-server  # Path to the directory containing Dockerfile
+      context: ./ai-server
       dockerfile: Dockerfile
     container_name: thunderbird-ai
+    env_file:
+      - .env
     depends_on:
       - llama-server
-    env_file:
-      - .env  # Store email credentials securely
     ports:
       - "4000:4000"
     restart: unless-stopped

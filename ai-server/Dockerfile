@@ -4,8 +4,11 @@ FROM node:18
 # Set working directory
 WORKDIR /app
 
+# Install CA certificates to fix SSL issues
+RUN apt-get update && apt-get install -y ca-certificates
+
 # Install dependencies
-COPY package*.json ./
+COPY package*.json package-lock*.json ./
 RUN npm install
 
 # Copy the entire project
@@ -18,4 +21,4 @@ EXPOSE 4000
 ENV NODE_ENV=production
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["node", "index.js"]

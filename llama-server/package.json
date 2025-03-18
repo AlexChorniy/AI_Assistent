@@ -1,29 +1,15 @@
 {
-    "name": "ai-thunderbird",
-    "version": "1.0.0",
-    "description": "AI-powered integration for Thunderbird using LLaMA 2",
-    "main": "ai-thunderbird.js",
-    "scripts": {
-      "start": "node ai-thunderbird.js",
-      "dev": "nodemon ai-thunderbird.js"
-    },
-    "dependencies": {
-      "express": "^4.18.2",
-      "dotenv": "^16.3.1",
-      "imap-simple": "^6.0.0",
-      "mailparser": "^3.4.0",
-      "openai": "^4.16.0",
-      "axios": "^1.5.1",
-      "cors": "^2.8.5",
-      "body-parser": "^1.20.2"
-    },
-    "devDependencies": {
-      "nodemon": "^3.0.1"
-    },
-    "engines": {
-      "node": ">=18"
-    },
-    "author": "Your Name",
-    "license": "MIT"
+  "name": "ai-assistant",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "express": "^4.18.2",
+    "axios": "^1.4.0",
+    "imap-simple": "^6.0.0",
+    "nodemailer": "^6.9.3"
+  }
 }
-  

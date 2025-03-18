@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js dependencies
-COPY package*.json ./
+COPY package*.json package-lock*.json ./
 RUN npm install
 
 # Clone LLaMA.cpp and build it
@@ -41,7 +41,7 @@ WORKDIR /app
 COPY . .
 
 # Expose API port
-EXPOSE 8000
+EXPOSE 5050
 
 # Start the Node.js application
-CMD ["node", "ai-thunderbird.js"]
+CMD ["node", "index.js"]
