@@ -50,7 +50,11 @@ Ensure you have the following installed:
     docker container prune
 8. Rebuild the Image
     After freeing up space, try building again:
+    
     docker compose --env-file .env build --no-cache
+
+    docker compose --env-file .env up -d
+
 9. Start the containers
     docker compose up -d
 10. Check logs if needed

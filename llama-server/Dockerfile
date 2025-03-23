@@ -5,10 +5,10 @@ FROM --platform=linux/amd64 node:18
 ARG HF_TOKEN
 ENV HF_TOKEN=${HF_TOKEN}
 
-# Set the working directory for your app
+# Set the working directory
 WORKDIR /app
 
-# Install required dependencies (wget, curl, git, cmake, build-essential)
+# Install required dependencies
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
@@ -19,29 +19,27 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js dependencies
-COPY package*.json package-lock*.json ./
+COPY package*.json ./
 RUN npm install
 
-# Clone LLaMA.cpp and build it
+# Clone and build LLaMA.cpp
 WORKDIR /llama
 RUN git clone https://github.com/ggerganov/llama.cpp.git
 WORKDIR /llama/llama.cpp
-RUN mkdir build && cd build && \
-    cmake .. -DGGML_OPTIMIZE=OFF -DGGML_USE_FP16=OFF -DGGML_USE_SVE=OFF && \
-    cmake --build . 
+RUN mkdir build && cd build && cmake .. && cmake --build .
 
-# Download the Yayi2 30B Llama model from Hugging Face
+# Download the Yayi2 30B LLaMA model from Hugging Face
 WORKDIR /llama
 RUN wget --header="Authorization: Bearer ${HF_TOKEN}" \
     "https://huggingface.co/TheBloke/yayi2-30B-llama-GGUF/resolve/main/yayi2-30b-llama.Q5_K_M.gguf" \
     -O /llama/yayi2-30b-llama.Q5_K_M.gguf
 
-# Copy the application source code
+# Copy application source code
 WORKDIR /app
 COPY . .
 
 # Expose API port
 EXPOSE 5050
 
-# Start the Node.js application
-CMD ["node", "index.js"]
+# Start the LLaMA Server (adjust if necessary)
+CMD ["node", "server.js"]
