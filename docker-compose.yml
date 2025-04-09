@@ -1,22 +1,25 @@
 services:
   llama-server:
-    platform: linux/amd64  # Force AMD64 architecture
     build:
       context: ./llama-server
       dockerfile: Dockerfile
-      args:
-        HF_TOKEN: ${HF_TOKEN} # Pass the HF_TOKEN as a build argument
     container_name: llama-server
-    command: ["node", "server.js"]  # Running directly from server.js instead of build/server.js
+    # command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5050"]
     working_dir: /app
     volumes:
       - ./llama-server:/app
-      - /app/node_modules  # Prevents node_modules from being overridden
     env_file:
       - .env
+    environment:
+      - HF_HUB_ENABLE_HF_TRANSFER=1
+      - TRANSFORMERS_VERBOSITY=info
+      - TRANSFORMERS_NO_ADVISORY_WARNINGS=1
+      - HF_TOKEN=${HF_TOKEN}
+      - MODEL_ID=${MODEL_ID}
     ports:
       - "5050:5050"
     restart: unless-stopped
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5050","--reload"]
 
   # ai-server:
   #   build:

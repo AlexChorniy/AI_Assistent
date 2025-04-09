@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+transformers
+torch
+safetensors
+pydantic
+huggingface_hub
+python-dotenv
+Pillow

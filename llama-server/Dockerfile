@@ -1,45 +1,23 @@
-# Use official Node.js base image
-FROM --platform=linux/amd64 node:18
+FROM python:3.9-slim
 
-# Set environment variable for Hugging Face Token
-ARG HF_TOKEN
-ENV HF_TOKEN=${HF_TOKEN}
-
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Install required dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    curl \
-    git \
-    cmake \
-    build-essential \
-    libomp-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js dependencies
-COPY package*.json ./
-RUN npm install
-
-# Clone and build LLaMA.cpp
-WORKDIR /llama
-RUN git clone https://github.com/ggerganov/llama.cpp.git
-WORKDIR /llama/llama.cpp
-RUN mkdir build && cd build && cmake .. && cmake --build .
-
-# Download the Yayi2 30B LLaMA model from Hugging Face
-WORKDIR /llama
-RUN wget --header="Authorization: Bearer ${HF_TOKEN}" \
-    "https://huggingface.co/TheBloke/yayi2-30B-llama-GGUF/resolve/main/yayi2-30b-llama.Q5_K_M.gguf" \
-    -O /llama/yayi2-30b-llama.Q5_K_M.gguf
-
-# Copy application source code
-WORKDIR /app
+# Copy requirements file first to leverage Docker cache
 COPY . .
 
-# Expose API port
+# Upgrade pip and install core dependencies
+RUN pip install --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt \
+ && pip install --upgrade transformers\
+ && pip install --no-cache-dir fastapi uvicorn python-dotenv transformers accelerate torch pillow \
+ && pip install --no-cache-dir "huggingface_hub[hf_xet]"
+
+# Copy application code
+COPY . .
+
+# Expose FastAPI port
 EXPOSE 5050
 
-# Start the LLaMA Server (adjust if necessary)
-CMD ["node", "server.js"]
+# Command to run FastAPI
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5050"]
