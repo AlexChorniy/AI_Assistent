@@ -51,12 +51,12 @@ Ensure you have the following installed:
 8. Rebuild the Image
     After freeing up space, try building again:
     
-    docker compose --env-file .env build --no-cache
+    docker compose --env-file .env build --no-cache or  docker compose build --no-cache
 
     docker compose --env-file .env up -d
 
 9. Start the containers
-    docker compose up -d
+    docker compose up -d or docker compose up
 10. Check logs if needed
     docker logs -f llama-server
     docker logs -f ai-server

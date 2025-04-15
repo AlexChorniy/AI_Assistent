@@ -1,10 +1,13 @@
 services:
   ollama:
-    image: ollama/ollama
+    image: ollama/ollama:latest
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+    restart: always
+    environment:
+      - OLLAMA_MODELS=/root/.ollama/models
   fastapi-server:
     build:
       context: ./fastapi-server
@@ -15,8 +18,10 @@ services:
       - ollama
     volumes:
       - ./fastapi-server:/app
+       - ollama_data:/root/.ollama
     environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_HOST=http://ollama:11434
+    restart: always
 volumes:
   ollama_data:
     driver: local
