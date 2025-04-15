@@ -63,6 +63,19 @@ Ensure you have the following installed:
 11. After increasing the limit, use:
     docker logs -f --tail=500 llama-server // This will show the last 500 lines without truncation.
 
+12. to pull AI model use next command line:
+    curl -X POST http://localhost:11434/api/pull \
+    -H "Content-Type: application/json" \
+    -d '{"name": "llama3"}'
+
+    to insure that model is pulled:
+    curl http://localhost:11434/api/tags
+
+    checking result request:  
+    curl -X POST http://localhost:5050/generate \
+    -H "Content-Type: application/json" \
+    -d '{"prompt": "What is a black hole?"}'
+
 ## Accessing the Server
 
 Once the server is running, access the API at:

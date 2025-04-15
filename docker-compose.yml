@@ -1,35 +1,42 @@
 services:
-  llama-server:
-    build:
-      context: ./llama-server
-      dockerfile: Dockerfile
-    container_name: llama-server
-    # command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5050"]
-    working_dir: /app
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
     volumes:
-      - ./llama-server:/app
-    env_file:
-      - .env
-    environment:
-      - HF_HUB_ENABLE_HF_TRANSFER=1
-      - TRANSFORMERS_VERBOSITY=info
-      - TRANSFORMERS_NO_ADVISORY_WARNINGS=1
-      - HF_TOKEN=${HF_TOKEN}
-      - MODEL_ID=${MODEL_ID}
+      - ollama_data:/root/.ollama
+  fastapi-server:
+    build:
+      context: ./fastapi-server
+      dockerfile: Dockerfile
     ports:
       - "5050:5050"
-    restart: unless-stopped
-    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5050","--reload"]
+    depends_on:
+      - ollama
+    volumes:
+      - ./fastapi-server:/app
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+volumes:
+  ollama_data:
+    driver: local
 
-  # ai-server:
+  # llama-server:
   #   build:
-  #     context: ./ai-server
+  #     context: ./llama-server
   #     dockerfile: Dockerfile
-  #   container_name: thunderbird-ai
+  #   container_name: llama-server
+  #   working_dir: /app
+  #   volumes:
+  #     - ./llama-server:/app
   #   env_file:
   #     - .env
-  #   depends_on:
-  #     - llama-server
+  #   environment:
+  #     - PYTHONUNBUFFERED=1
+  #     - HF_TOKEN=${HF_TOKEN}
+  #     - MODEL_ID=${MODEL_ID}
   #   ports:
-  #     - "4000:4000"
+  #     - "5050:5050"
   #   restart: unless-stopped
+  #   command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5050","--reload"]  # Remove `--reload` for production
+
